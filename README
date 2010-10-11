@@ -1,0 +1,8 @@
+@author: zsc
+
+objmixer is a script to allow diagnosing wrong object files, especially useful for debugging a compiler.
+
+Suppose code produced by a compiler with "-O0" is OK, but code produced by "-O2" fails. 
+Then we can try to mix the object files from "-O0" and "-O2" to find the wrong object files.
+
+The user need to adapt the obm_plugin.py file to use objmixer.
