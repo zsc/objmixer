@@ -19,7 +19,8 @@ procResult: how we handle the found results.
 import os
 from subprocess import Popen, PIPE
 
-searchType = "Exhaustive"
+searchType = "Binary"
+#searchType = "Exhaustive"
 #searchType = "Random"
 
 def alt(s):

@@ -3,7 +3,7 @@ Created on 2010-10-11
 
 @author: zsc
 
-objmixer is a script to allow diagnosing wrong object files, especially useful for debugging a compiler.
+objmixer is a script to allow identifying wrong object files, especially useful for debugging a compiler.
 
 Suppose code produced by a compiler with "-O0" is OK, but code produced by "-O2" fails. 
 Then we can try to mix the object files from "-O0" and "-O2" to find the wrong object files.
@@ -14,22 +14,28 @@ The user need to adapt the obm_plugin.py file to use objmixer.
 from subprocess import Popen, PIPE
 import os
 import random
+     
+def randomHalve(l):
+    a,a_=[],[]
+    for e in l:
+        if random.randint(0,1)==0:a+=[e]
+        else:a_+=[e]
+    return (a,a_)
 
-def random_vector(n):
-    for i in range(n):
-        yield random.randint(0,1)
+def list_diff(l1,l2):return [e for e in l1 if e not in l2]
 
-def mixByVector(vec,l1,l2):
-    if vec==[]:pass
-    else:
-        v,vs=vec[0],vec[1:]
-        x,xs=l1[0],l1[1:]
-        y,ys=l2[0],l2[1:]
-        if v!=0:
-            yield x
-        else:
-            yield y
-        for e in mixByVector(vs,xs,ys):yield e
+def binSearch(test,l):
+    def work(acc,l):
+        if len(l)<=1:yield l
+        l1,l2 = randomHalve(l)
+        for _ in range(3):
+            if test((l2,acc+l1)):
+                for e in work (acc+l2,l1):yield e
+            elif test((l1,acc+l2)):
+                for e in work (acc+l1,l2):yield e
+        assert False
+    for l_ in work ([],l):
+        yield (l_,list_diff(l,l_))
 
 def splits(l):
     def splitsAux(l):
@@ -47,25 +53,35 @@ def splits(l):
             yield i
             
 def step (compile,objs,alt,canContinue,name,searchType):
+    def combine((a,b)):return map(alt,a)+b
     def names(name):
         i=1
         while True:
             yield name+"_"+str(i)
             i+=1
     def objs_gen(objs,alt):
-        for (a,b) in splits(objs):
-            yield map(alt,a)+b
+        for i in splits(objs):
+            yield combine(i)
+    def doCompile(objs,bin):
+        cmd = compile(objs,bin)
+        if (os.system(cmd)!=0):
+            print ("CompileFail",objs,bin)
     if searchType=="Exhaustive":
         og = objs_gen(objs,alt)
         for bin in names(name):
             objs = og.next()
-            cmd = compile(objs,bin)
-            if (os.system(cmd)!=0):
-                print ("CompileFail",objs,bin)
+            doCompile(objs,bin)
             if(canContinue(bin)):
                 print ("NotFound",objs,bin)
             else:
                 yield ("Found",objs,bin)
+    elif searchType=="Binary":
+        ns = names(name)
+        def test(l):
+            bin = ns.next()
+            doCompile(combine(l),bin)
+            return canContinue(bin)
+        for e in binSearch(test,objs):yield e
     elif searchType=="Random":
         assert False
     else:
