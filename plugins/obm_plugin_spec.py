@@ -24,9 +24,9 @@ searchType = "Binary"
 #searchType = "Random"
 
 def alt(s):
-    return "./"+s
+    return "correct/"+s
 
-compileCommand = "/home/loongcc2/bin/gcc bc-emit.o bc-optab.o c-aux-info.o c-common.o c-convert.o c-decl.o c-iterate.o c-lang.o c-lex.o c-parse.o c-pragma.o c-typeck.o caller-save.o calls.o combine.o convert.o cse.o dbxout.o dwarfout.o emit-rtl.o explow.o expmed.o expr.o final.o flow.o fold-const.o function.o getpwd.o global.o insn-attrtab.o insn-emit.o insn-extract.o insn-opinit.o insn-output.o insn-peep.o insn-recog.o integrate.o jump.o local-alloc.o loop.o m88k.o obstack.o optabs.o print-rtl.o print-tree.o real.o recog.o reg-stack.o regclass.o reload.o reload1.o reorg.o rtl.o rtlanal.o sched.o sdbout.o stmt.o stor-layout.o stupid.o toplev.o tree.o unroll.o varasm.o version.o xcoffout.o  -static -O3 -lm     -o cc1" 
+compileCommand = "gcc bc-emit.o bc-optab.o c-aux-info.o c-common.o c-convert.o c-decl.o c-iterate.o c-lang.o c-lex.o c-parse.o c-pragma.o c-typeck.o caller-save.o calls.o combine.o convert.o cse.o dbxout.o dwarfout.o emit-rtl.o explow.o expmed.o expr.o final.o flow.o fold-const.o function.o getpwd.o global.o insn-attrtab.o insn-emit.o insn-extract.o insn-opinit.o insn-output.o insn-peep.o insn-recog.o integrate.o jump.o local-alloc.o loop.o m88k.o obstack.o optabs.o print-rtl.o print-tree.o real.o recog.o reg-stack.o regclass.o reload.o reload1.o reorg.o rtl.o rtlanal.o sched.o sdbout.o stmt.o stor-layout.o stupid.o toplev.o tree.o unroll.o varasm.o version.o xcoffout.o  -static -O3 -lm     -o cc1" 
 
 '''
   Key content of the cmd script is the time limit set by ulimit
