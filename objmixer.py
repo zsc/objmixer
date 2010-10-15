@@ -12,7 +12,7 @@ The user need to adapt the obm_plugin.py file to use objmixer.
 '''
 
 from subprocess import Popen, PIPE
-import os
+import os,sys
 import random
      
 def randomHalve(l):
@@ -108,8 +108,12 @@ def parse(cmd):
     return compile,objs,name
  
 def main ():
-    print "hi, pydev"
-    exec (open("obm_plugin.py"))
+    print "hi, objmixer"
+    try:plugin = open(sys.argv[1])
+    except:
+        print "Usage:%s path-to-plugin-file"%sys.argv[0]
+        exit(-1)
+    exec (plugin)
     compile,objs,name = parse(compileCommand)
     procResult(step(compile,objs,alt,canContinue,name,searchType))
 
