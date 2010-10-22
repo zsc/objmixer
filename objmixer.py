@@ -23,6 +23,18 @@ def randomHalve(l):
     return (a,a_)
 
 def list_diff(l1,l2):return [e for e in l1 if e not in l2]
+def span(f,l):
+    if l==[]:return [],[]
+    x,xs=l[0],l[1:]
+    if f(x):
+        l1,l2=span(f,xs)
+        return [x]+l1,l2
+    else:return [],l
+def groupBy(eq,l):
+    if l==[]:return []
+    x,xs=l[0],l[1:]
+    ys,zs = span(lambda a:eq(x,a),xs)
+    return [[x]+ys]+groupBy(eq,zs)
 
 def binSearch(test,l):
     def work(acc,l):
@@ -88,24 +100,30 @@ def step (compile,objs,alt,canContinue,name,searchType):
         assert False
 
 def parse(cmd):
-    l = cmd.split()
-    objs = filter (lambda s:s.endswith(".o"),l)
-    libs = filter (lambda s:s.endswith(".a"),l)
-    cmdBody = []
-    i =0
-    while (i<len(l)):
-        s = l[i] 
-        if s=="-o":
+    def typ(s):
+        if s.endswith(".o"):return "obj"
+        return "other"
+    l = cmd.split()    
+    objects = filter (lambda s:typ(s)=="obj",l)
+    name = l[l.index("-o")+1]
+    def gen(objs):
+        cmdBody = []
+        i =0
+        cnt =0
+        while (i<len(l)):
+            s = l[i] 
+            if s=="-o":
+                i+=1
+            elif typ(s)=="obj":
+                cmdBody += [objs[cnt]]
+                cnt += 1
+            else:
+                cmdBody += [s]
             i+=1
-            name = l[i]
-        elif s.endswith(".o") or s.endswith(".a"):
-            pass
-        else:
-            cmdBody += [s]
-        i+=1
+        return cmdBody
     def compile(objs,bin):
-        return " ".join(cmdBody + ["-o",bin] + objs + libs)
-    return compile,objs,name
+        return " ".join(gen(objs) + ["-o",bin])
+    return compile,objects,name
  
 def main ():
     print "hi, objmixer"
